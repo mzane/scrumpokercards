@@ -1,0 +1,57 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    title Scrumpoker.cards Estimation Room by Highpace
+    style.
+      html {
+      background-color: white;
+      box-sizing: border-box;
+      color: #262626;
+      font-family: 'Roboto Condensed', sans-serif;
+      }
+      table {
+      background-color: #CCC;
+      }
+      th {
+      padding: 4px 6px;
+      text-align: left;
+      }
+      td {
+      border-top: solid 1px #999;
+      padding: 4px 6px;
+      }
+      table.count tr:first-child {
+      font-weight: bold;
+      }
+      table.estimates td:nth-child(2) {
+      font-weight: bold;
+      }
+      footer {
+      font-size: .8em;
+      margin-top: 3em;
+      }
+
+  body
+    h1 Estimation
+    h2 Room:
+      = ' '
+      span(data-js-room-name)= room
+
+    div(data-js-estimate-tables)
+
+    br
+    br
+    br
+
+    p
+      small
+        a(href='/beta/delete/' + room) (Delete this room and its estimations - WARNING: cannot be undone!)
+
+    footer
+      p Scrumpoker.cards Estimation Room by
+        = ' '
+        a(href='//www.highpace.de', target='_blank') Highpace
+
+    script(src='//code.jquery.com/jquery-3.0.0.js')
+    script(src='/beta/assets/room.js')

@@ -1,0 +1,23 @@
+table.count(cellspacing="0")
+  thead
+    tr
+      th Count
+      th Estimate
+  tbody
+    each count in estimateCount
+      tr
+        td= count[1]
+        td= count[0]
+
+br
+
+table.estimates(cellspacing="0")
+  thead
+    tr
+      th Name
+      th Estimate
+  tbody
+    each entry in estimates
+      tr
+        td= entry.name
+        td= entry.estimate

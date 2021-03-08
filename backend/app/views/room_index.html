@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>scrumpoker.cards provided by Highpace</title>
+	<!-- Standard Favicon -->
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<!-- For iPhone 4 Retina display: -->
+	<link rel="apple-touch-icon-precomposed" sizes="120x120" href="apple-touch-icon-120x120-precomposed.png">
+	<!-- For iPad: -->
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+	<!-- For iPhone: -->
+	<link rel="apple-touch-icon-precomposed" sizes="152x152" href="apple-touch-icon-152x152-precomposed.png">
+	<!-- For Windows 8: -->
+	<meta name="msapplication-TileImage" content="pinned.png">
+	<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		*, *:before, *:after {
+			box-sizing: inherit;
+		}
+
+		html {
+			background-color: white;
+			box-sizing: border-box;
+			color: #262626;
+			font-family: 'Roboto Condensed', Arial, sans-serif;
+			overflow: hidden;
+		}
+
+		body {
+			overflow: hidden;
+			position: relative;
+		}
+
+		.scrumcards {
+			align-content: space-around;
+			align-items: stretch;
+			display: inline-flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-around;
+			margin: 10px 5px;
+		}
+
+		.scrumcard-thumb {
+			background-color: #F09900;
+			border-radius: .2em;
+			color: #FFF;
+			font-size: 3.5em;
+			margin-bottom: 10px;
+			text-align: center;
+			text-decoration: none;
+		}
+
+		.scrumcard-big {
+			background-color: #F09900;
+			border-radius: .9em;
+			cursor: pointer;
+			position: fixed;
+			left: 13px;
+			bottom: 40px;
+			right: 13px;
+			top: 10px;
+			display: none; /*must be flex to show it*/
+			justify-content: center;
+			align-items: center;
+			text-decoration: none;
+		}
+
+		.scrumcard-big-text {
+			color: #FFF;
+			font-size: 12em;
+			display: none;
+		}
+
+		.footer {
+			background-color: #262626;
+			bottom: 0;
+			color: #CCC;
+			left: 0;
+			padding: 5px 15px;
+			position: fixed;
+			right: 0;
+		}
+
+		.footer .right {
+			float: right;
+			text-align: right;
+		}
+
+		.footer a {
+			color: #FFF;
+			text-decoration: none;
+		}
+
+		.dot.success {
+			color: forestgreen;
+		}
+
+		.dot.error {
+			color: darkred;
+		}
+
+		.join-room {
+			background-color: #F09900;
+			border-radius: .9em;
+			position: fixed;
+			left: 13px;
+			bottom: 40px;
+			right: 13px;
+			top: 10px;
+			display: none; /*must be flex to show it*/
+			justify-content: center;
+			align-items: center;
+			text-decoration: none;
+		}
+
+		.join-room p {
+			margin-bottom: 10px;
+		}
+
+		input {
+			border: solid 1px #CCC;
+			padding: 6px 8px;
+			width: 240px;
+		}
+
+		.message-bubble {
+			position: fixed;
+			padding: 12px 20px;
+			background-color: #EEE;
+			border-radius: 10px;
+			left: 50%;
+			top: -50px;
+			transform: translate(-50%, -50%);
+			box-shadow: 0 0 10px #262626;
+			white-space: nowrap;
+			transition: top 0.2s ease-out;
+		}
+
+		.message-bubble.show {
+			top: 15%;
+		}
+
+		.message-bubble.success {
+			color: forestgreen;
+		}
+
+		.message-bubble.error {
+			color: darkred;
+		}
+	</style>
+</head>
+<body>
+<div class="scrumcards" data-scrumcards>
+	<a href="#?" class="scrumcard-thumb" data-scrumcard>?</a>
+	<a href="#0" class="scrumcard-thumb" data-scrumcard>0</a>
+	<a href="#0,5" class="scrumcard-thumb" data-scrumcard>0,5</a>
+	<a href="#1" class="scrumcard-thumb" data-scrumcard>1</a>
+	<a href="#2" class="scrumcard-thumb" data-scrumcard>2</a>
+	<a href="#3" class="scrumcard-thumb" data-scrumcard>3</a>
+	<a href="#5" class="scrumcard-thumb" data-scrumcard>5</a>
+	<a href="#8" class="scrumcard-thumb" data-scrumcard>8</a>
+	<a href="#13" class="scrumcard-thumb" data-scrumcard>13</a>
+	<a href="#20" class="scrumcard-thumb" data-scrumcard>20</a>
+	<a href="#40" class="scrumcard-thumb" data-scrumcard>40</a>
+	<a href="#100" class="scrumcard-thumb" data-scrumcard>100</a>
+</div>
+
+<a href="#back" class="scrumcard-big" data-scrumcard-big>
+	<span class="scrumcard-big-text" data-scrumcard-big-text> </span>
+</a>
+
+
+<footer class="footer">
+	<p>
+    <span>
+      <a href="#joinroom"><span class="dot" data-joinroom-dot>&#x25cf;</span> Join room</a>
+    </span>
+		<span class="right">
+      scrumpoker.cards by <a href="http://www.highpace.de/" target="_blank">Highpace</a>
+    </span>
+	</p>
+</footer>
+
+<div class="join-room" data-joinroom>
+	<form action="/joinroom" method="post" data-joinroom-form>
+		<p>
+			<label>
+				<input type="text" name="room" placeholder="Room" required>
+			</label>
+		</p>
+		<p>
+			<label>
+				<input type="text" name="name" placeholder="Name" required>
+			</label>
+		</p>
+
+		<p>
+			<input type="submit" value="Join room &raquo;">
+		</p>
+
+		<p>
+			<br>
+			<a href="#back">&laquo; Back</a>
+		</p>
+	</form>
+</div>
+
+
+<div class="message-bubble" data-js-message-bubble=""></div>
+
+
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>-->
+<script src="//code.jquery.com/jquery-3.0.0.js"></script>
+<script>
+	(function (win, $) {
+		var $win = $(win),
+			$scrumcards = $('[data-scrumcards]'),
+			$scrumcard = $('[data-scrumcard]'),
+			$scrumcardBig = $('[data-scrumcard-big]'),
+			$scrumcardBigText = $('[data-scrumcard-big-text]'),
+			$joinRoom = $('[data-joinroom]'),
+			$joinRoomForm = $('[data-joinroom-form]'),
+			$joinRoomDot = $('[data-joinroom-dot]'),
+			hash = '',
+			hasJoinedRoom = false,
+			joinedRoom = {},
+			localStorage = window.localStorage,
+			$messageBubble = $('[data-js-message-bubble]');
+
+		function fixLayout() {
+			var winWidth = $win.width(),
+				winHeight = $win.height();
+			$('body').height(winHeight);
+			$scrumcard
+				.css('line-height', (winHeight / 4) - 20 + 'px')
+				.height((winHeight / 4) - 20)
+				.width((winWidth / 3) - 20);
+		}
+
+		fixLayout();
+		$win.on('resize', function () {
+			fixLayout();
+		});
+
+		// Hide address bar
+		win.scrollTo(0,1);
+
+		// var socket = io();
+
+		var bubbleTimeout;
+		function showBubble(msg, type) {
+			if (!msg || !type) {
+				return;
+			}
+
+			$messageBubble
+				.removeClass('success error')
+				.html(msg)
+				.addClass(type + ' show');
+
+			bubbleTimeout = win.setTimeout(function () {
+				hideBubble();
+			}, 2000);
+		}
+		function hideBubble() {
+			win.clearTimeout(bubbleTimeout);
+			$messageBubble.removeClass('show');
+		}
+
+		// Taken from http://shebang.brandonmintern.com/foolproof-html-escaping-in-javascript/
+		function escapeHtml(str) {
+			var div = document.createElement('div');
+			div.appendChild(document.createTextNode(str));
+			return div.innerHTML;
+		}
+
+		// Hashchange
+		function removeHash() {
+			if (win.location.protocol === 'http:' || win.location.protocol === 'https:') {
+				history.pushState('', win.document.title, win.location.pathname);
+			}
+		}
+
+		function goBack() {
+			hideBubble();
+			removeHash();
+			$scrumcards.show();
+			$scrumcardBig.css('display', 'none');
+			$scrumcardBigText.hide();
+			$joinRoom.css('display', 'none');
+		}
+
+		function handleHashChange() {
+			hash = escapeHtml(win.location.hash.replace('#', ''));
+
+			if (hash === 'joinroom') {
+				$joinRoom.css('display', 'flex');
+			} else if (hash === 'back' || hash === '') {
+				goBack();
+			} else {
+				// Not more than 3 characters please!
+				if (hash.length > 3) {
+					return;
+				}
+				$scrumcardBigText.text(hash.toUpperCase()).show();
+				$scrumcardBig.css('display', 'flex');
+				$scrumcards.hide();
+
+				if (hasJoinedRoom && joinedRoom && joinedRoom.room && joinedRoom.name) {
+					var url = '/beta/estimate';
+					url = url + '/' + joinedRoom.room + '/' + joinedRoom.name + '/' + encodeURIComponent(hash);
+					$.ajax({
+						type: 'POST',
+						url: url
+					}).done(function(data) {
+						if (data === 'OK') {
+							showBubble('Estimate successfully posted&nbsp;&checkmark;', 'success');
+						}
+					}).fail(function () {
+						showBubble('Estimate not successfully posted&nbsp;&times;', 'error');
+					});
+				}
+			}
+		}
+		handleHashChange();
+		$win.on('hashchange', function () {
+			handleHashChange();
+		});
+
+		// Join room
+		function joinRoom() {
+			var url = $joinRoomForm.attr('action'),
+				room = $joinRoomForm.find('[name="room"]').val(),
+				name = $joinRoomForm.find('[name="name"]').val();
+
+			// The name is not necessary for joining the room, but for sending the estimates later on:
+			url = '/beta' + url + '/' + room + '/' + name;
+
+			$.post(url, function (data) {
+				if (data === 'OK') {
+					$joinRoomDot.addClass('success');
+					hasJoinedRoom = true;
+					joinedRoom = {
+						room: room,
+						name: name
+					};
+
+					showBubble('Joined room successfully&nbsp;&checkmark;', 'success');
+				} else {
+					$joinRoomDot.addClass('error');
+					hasJoinedRoom = false;
+					joinedRoom = {
+						room: room,
+						name: name
+					};
+
+					showBubble('Joined room not successfully&nbsp;&times;', 'error');
+				}
+				if (localStorage) {
+					localStorage.setItem('spc_room', room);
+					localStorage.setItem('spc_name', name);
+				}
+			});
+		}
+		$joinRoomForm.on('submit', function (event) {
+			event.preventDefault();
+			joinRoom();
+			goBack();
+		});
+		if (localStorage && localStorage.getItem('spc_room') && localStorage.getItem('spc_name')) {
+			$joinRoomForm.find('[name="room"]').val(localStorage.getItem('spc_room'));
+			$joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name'));
+			joinRoom();
+		}
+	}(window, jQuery));
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-22060568-3', 'auto');
+  ga('send', 'pageview');
+</script>
+</body>
+</html>
