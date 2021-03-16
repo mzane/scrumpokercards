@@ -325,7 +325,11 @@
         function handleHashChange() {
             hash = escapeHtml(win.location.hash.replace('#', ''));
 
-            if (hash === 'joinroom') {
+            if (hash.indexOf('joinroom_') === 0) {
+                const joinedRoomName = hash.replace(/joinroom_/, '');
+                $joinRoomForm.find('[name="room"]').val(joinedRoomName);
+                $joinRoom.css('display', 'flex');
+            } else if (hash === 'joinroom') {
                 $joinRoom.css('display', 'flex');
             } else if (hash === 'back' || hash === '') {
                 goBack();
