@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>scrumpoker.cards Estimation Room by Highpace</title>
+    <style>
+        html {
+            background-color: white;
+            box-sizing: border-box;
+            color: #262626;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+        table {
+            background-color: #CCC;
+        }
+        th {
+            padding: 4px 6px;
+            text-align: left;
+        }
+        td {
+            border-top: solid 1px #999;
+            padding: 4px 6px;
+        }
+        table.count tr:first-child {
+            font-weight: bold;
+        }
+        table.estimates td:nth-child(2) {
+            font-weight: bold;
+        }
+        footer {
+            font-size: .8em;
+            margin-top: 3em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Estimation Room</h1>
+<h2>Room: <span id="room-name">&ndash;no room name defined&ndash;</span></h2>
+
+<div id="table-estimation-counts"></div>
+<br>
+<div id="table-full-list"></div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
+
+<!-- Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/dataAsArray/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-database.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyAd1uiSyR2XXN8rUaHmXY4GsgUbxmYZJYY",
+        authDomain: "scrumpokercards-38516.firebaseapp.com",
+        databaseURL: "https://scrumpokercards-38516-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "scrumpokercards-38516",
+        storageBucket: "scrumpokercards-38516.appspot.com",
+        messagingSenderId: "926440560533",
+        appId: "1:926440560533:web:d4446d1ca7bf643be7089c",
+        measurementId: "G-XHCMWWY1NY"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    // -----------------------------
+    // Get room-data:
+    if (window.location.hash) {
+        const roomNameOutput = document.getElementById('room-name');
+        const tableEstimationCounts = document.getElementById('table-estimation-counts');
+        const tableFullList = document.getElementById('table-full-list');
+
+        const roomName = window.location.hash.substr(1);
+
+        roomNameOutput.innerHTML = roomName;
+
+        const starCountRef = firebase.database().ref('estimationRooms/' + roomName);
+        starCountRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                return;
+            }
+
+            const dataAsArray = Object.entries(data);
+
+            // 1. table - sort estimates from most to least
+            const estimateCount = {};
+            dataAsArray.forEach((entry) => {
+                const estimate = entry[1].estimate;
+                // console.log('start', estimate);
+                if (estimateCount[estimate] === undefined) {
+                    estimateCount[estimate] = 1;
+                    // console.log('if', estimateCount[estimate], estimate);
+                } else {
+                    estimateCount[estimate] = ++estimateCount[estimate];
+                    // console.log('else', estimateCount[estimate], estimate);
+                }
+            });
+
+            const estimateCountSorted = [];
+            for (const estimate in estimateCount) {
+                if (estimateCount.hasOwnProperty(estimate) && estimate !== 'undefined') {
+                    estimateCountSorted.push([estimate, estimateCount[estimate]]);
+                }
+            }
+            estimateCountSorted.sort(function(a, b) {
+                return b[1] - a[1];
+            });
+
+            let tableEstimationCountsHtml = '<table class="count" cellspacing="0"><thead><tr><th>Count</th><th>Estimate</th></tr></thead><tbody>';
+            estimateCountSorted.forEach((entry) => {
+                tableEstimationCountsHtml += `<tr><td>${entry[1]}</td><td>${entry[0]}</td></tr>`;
+            });
+            tableEstimationCountsHtml += '</tbody></table>';
+
+            tableEstimationCounts.innerHTML = tableEstimationCountsHtml;
+
+            // 2. table - sort names alphabetically
+            const estimatesSorted = dataAsArray;
+            estimatesSorted.sort(function(a, b){
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            });
+
+            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th></tr></thead><tbody>';
+            estimatesSorted.forEach((entry) => {
+                tableFullListHtml += `<tr><td>${entry[0]}</td><td>${entry[1].estimate}</td></tr>`;
+            });
+            tableFullListHtml += '</tbody></table>';
+
+            tableFullList.innerHTML = tableFullListHtml;
+        });
+    }
+</script>
+
+</body>
+</html>

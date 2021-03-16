@@ -1,0 +1,23 @@
+{
+  "name": "scrumpokercards",
+  "version": "1.0.0",
+  "main": "firebase-app/index.html",
+  "private": true,
+  "scripts": {
+    "build": "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --use-short-doctype --minify-css true --minify-js true --input-dir firebase-app --output-dir public",
+    "deploy": "firebase deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mzane/scrumpokercards.git"
+  },
+  "author": "Matthias Krumm <matthias@matthiaskrumm.name>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mzane/scrumpokercards/issues"
+  },
+  "homepage": "https://github.com/mzane/scrumpokercards#readme",
+  "dependencies": {
+    "html-minifier": "^4.0.0"
+  }
+}
