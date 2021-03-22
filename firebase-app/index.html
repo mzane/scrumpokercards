@@ -27,16 +27,27 @@
         }
 
         html {
-            background-color: white;
+            background-color: #FFF;
             box-sizing: border-box;
             color: #262626;
             font-family: 'Roboto Condensed', Arial, sans-serif;
+            font-size: 1.2em;
             overflow: hidden;
+        }
+
+        @media (max-width: 600px) {
+            html {
+                font-size: 1em;
+            }
         }
 
         body {
             overflow: hidden;
             position: relative;
+        }
+
+        a {
+            color: #FFF;
         }
 
         .scrumcards {
@@ -127,7 +138,10 @@
         }
 
         input {
+            font-size: 1em;
             border: solid 1px #CCC;
+            border-radius: 3px;
+            outline: 0 none;
             padding: 6px 8px;
             width: 240px;
         }
@@ -180,12 +194,12 @@
 
 <footer class="footer">
     <p>
-    <span>
-      <a href="#joinroom"><span class="dot" data-joinroom-dot>&#x25cf;</span> Join room</a>
-    </span>
+        <span>
+            <a href="#join"><span class="dot" data-joinroom-dot>&#x25cf;</span> Join room</a>
+        </span>
         <span class="right">
-      scrum-poker.cards by <a href="https://matthiaskrumm.name/" target="_blank">Matthias Krumm</a>
-    </span>
+            scrum-poker.cards by <a href="https://matthiaskrumm.name/" target="_blank">Matthias Krumm</a>
+        </span>
     </p>
 </footer>
 
@@ -193,12 +207,12 @@
     <form action="/joinroom" method="post" data-joinroom-form>
         <p>
             <label>
-                <input type="text" name="room" placeholder="Room" required>
+                <input type="text" name="room" placeholder="Room name" required>
             </label>
         </p>
         <p>
             <label>
-                <input type="text" name="name" placeholder="Name" required>
+                <input type="text" name="name" placeholder="User name" required>
             </label>
         </p>
 
@@ -265,9 +279,9 @@
                 winHeight = $win.height();
             $('body').height(winHeight);
             $scrumcard
-                .css('line-height', (winHeight / 4) - 20 + 'px')
-                .height((winHeight / 4) - 20)
-                .width((winWidth / 3) - 20);
+                .css('line-height', (winHeight / 4) - 21 + 'px')
+                .height((winHeight / 4) - 21)
+                .width((winWidth / 3) - 16);
         }
 
         fixLayout();
@@ -324,11 +338,11 @@
         function handleHashChange() {
             hash = escapeHtml(win.location.hash.replace('#', ''));
 
-            if (hash.indexOf('joinroom_') === 0) {
-                const joinedRoomName = hash.replace(/joinroom_/, '');
+            if (hash.indexOf('join/') === 0) {
+                const joinedRoomName = hash.replace('join/', '');
                 $joinRoomForm.find('[name="room"]').val(joinedRoomName);
                 $joinRoom.css('display', 'flex');
-            } else if (hash === 'joinroom') {
+            } else if (hash === 'join') {
                 $joinRoom.css('display', 'flex');
             } else if (hash === 'back' || hash === '') {
                 goBack();
@@ -387,7 +401,7 @@
                         room: room,
                         name: name
                     };
-                    showBubble('Joined room successfully&nbsp;&checkmark;', 'success');
+                    showBubble(`Joined room <strong>${room}</strong> as <strong>${name}</strong> successfully&nbsp;&checkmark;`, 'success');
                 }
             });
         }
