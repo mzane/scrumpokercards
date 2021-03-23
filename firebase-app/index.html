@@ -123,9 +123,9 @@
             background-color: #F09900;
             border-radius: .9em;
             position: fixed;
-            left: 13px;
-            bottom: 40px;
-            right: 13px;
+            left: 11px;
+            bottom: 44px;
+            right: 11px;
             top: 10px;
             display: none; /*must be flex to show it*/
             justify-content: center;
@@ -135,6 +135,24 @@
 
         .join-room p {
             margin-bottom: 10px;
+        }
+
+        .join-room__close {
+            position: fixed;
+            right: 1em;
+            top: 1.5em;
+        }
+
+        .join-room__close a {
+            text-decoration: none;
+            font-size: 3em;
+            padding: .5em;
+        }
+
+        .join-room__share {
+            display: none;
+            margin-top: 3em;
+            text-align: center;
         }
 
         input {
@@ -204,25 +222,29 @@
 </footer>
 
 <div class="join-room" data-joinroom>
+    <div class="join-room__close">
+        <a href="#back">&times;</a>
+    </div>
     <form action="/joinroom" method="post" data-joinroom-form>
         <p>
-            <label>
+            <label>Room name:<br>
                 <input type="text" name="room" placeholder="Room name" required>
             </label>
         </p>
         <p>
-            <label>
+            <label>User name:<br>
                 <input type="text" name="name" placeholder="User name" required>
             </label>
         </p>
 
         <p>
+            <br>
             <input type="submit" value="Join room &raquo;">
         </p>
 
-        <p>
-            <br>
-            <a href="#back">&laquo; Back</a>
+        <p class="join-room__share" data-joinroom-share>
+            Link for joining this room:<br>
+            scrum-poker.cards#join/<span></span>
         </p>
     </form>
 </div>
@@ -267,6 +289,7 @@
             $joinRoom = $('[data-joinroom]'),
             $joinRoomForm = $('[data-joinroom-form]'),
             $joinRoomDot = $('[data-joinroom-dot]'),
+            $joinRoomShare = $('[data-joinroom-share]'),
             $messageBubble = $('[data-js-message-bubble]'),
             localStorage = win.localStorage;
 
@@ -402,6 +425,8 @@
                         name: name
                     };
                     showBubble(`Joined room <strong>${room}</strong> as <strong>${name}</strong> successfully&nbsp;&checkmark;`, 'success');
+
+                    $joinRoomShare.show().find('span').html(room);
                 }
             });
         }
