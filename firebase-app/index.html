@@ -255,7 +255,7 @@
 
         <p class="join-room__share" data-joinroom-share>
             Link for joining this room:<br>
-            <a href="#">scrum-poker.cards/#join/<span></span></a>
+            <a href="#" target="_blank">scrum-poker.cards#join/<span></span></a>
         </p>
     </form>
 </div>
@@ -439,7 +439,7 @@
                     showBubble(`Joined room <strong>${room}</strong> as <strong>${name}</strong> successfully&nbsp;&checkmark;`, 'success');
 
                     $joinRoomGotoRoom.show().find('a').attr('href', `https://scrum-poker.cards/room#${room}`).find('span').html(room);
-                    $joinRoomShare.show().find('span').html(room);
+                    $joinRoomShare.show().find('a').attr('href', `https://scrum-poker.cards#join/${room}`).find('span').html(room);
                 }
             });
         }
