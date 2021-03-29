@@ -149,6 +149,12 @@
             padding: .5em;
         }
 
+        .join-room__goto-room {
+            display: none;
+            margin-top: 3em;
+            text-align: center;
+        }
+
         .join-room__share {
             display: none;
             margin-top: 3em;
@@ -242,9 +248,14 @@
             <input type="submit" value="Join room &raquo;">
         </p>
 
+        <p class="join-room__goto-room" data-joinroom-goto-room>
+            See all its estimates:<br>
+            <a href="#" target="_blank">scrum-poker.cards/room#<span></span></a>
+        </p>
+
         <p class="join-room__share" data-joinroom-share>
             Link for joining this room:<br>
-            scrum-poker.cards#join/<span></span>
+            <a href="#">scrum-poker.cards/#join/<span></span></a>
         </p>
     </form>
 </div>
@@ -289,6 +300,7 @@
             $joinRoom = $('[data-joinroom]'),
             $joinRoomForm = $('[data-joinroom-form]'),
             $joinRoomDot = $('[data-joinroom-dot]'),
+            $joinRoomGotoRoom = $('[data-joinroom-goto-room]'),
             $joinRoomShare = $('[data-joinroom-share]'),
             $messageBubble = $('[data-js-message-bubble]'),
             localStorage = win.localStorage;
@@ -426,6 +438,7 @@
                     };
                     showBubble(`Joined room <strong>${room}</strong> as <strong>${name}</strong> successfully&nbsp;&checkmark;`, 'success');
 
+                    $joinRoomGotoRoom.show().find('a').attr('href', `https://scrum-poker.cards/room#${room}`).find('span').html(room);
                     $joinRoomShare.show().find('span').html(room);
                 }
             });
