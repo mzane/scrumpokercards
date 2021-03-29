@@ -132,24 +132,25 @@
                     estimateCount[estimate] = ++estimateCount[estimate];
                 }
             });
-
             const estimateCountSorted = [];
             for (const estimate in estimateCount) {
                 if (estimateCount.hasOwnProperty(estimate) && estimate !== 'undefined') {
                     estimateCountSorted.push([estimate, estimateCount[estimate]]);
                 }
             }
-            estimateCountSorted.sort(function(a, b) {
-                return b[1] - a[1];
-            });
 
             // 1. table - visualized
+            const estimateCountSortedOnEstimate = [...estimateCountSorted];
+            estimateCountSortedOnEstimate.sort(function(a, b) {
+                return parseInt(a[0], 10) - parseInt(b[0], 10);
+            });
+
             let tableVisualizedHtml = '<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>';
-            estimateCountSorted.forEach((entry) => {
+            estimateCountSortedOnEstimate.forEach((entry) => {
                 tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${entry[0]}</td>`;
             });
             tableVisualizedHtml += '</tr><tr><th scope="row">Count</th>';
-            estimateCountSorted.forEach((entry) => {
+            estimateCountSortedOnEstimate.forEach((entry) => {
                 tableVisualizedHtml += `<td>${entry[1]}</td>`;
             });
             tableVisualizedHtml += '</tr></tbody></table>';
@@ -157,7 +158,9 @@
             tableVisualized.innerHTML = tableVisualizedHtml;
 
             // 2. table - sort estimates from most to least
-
+            estimateCountSorted.sort(function(a, b) {
+                return b[1] - a[1];
+            });
 
             let tableEstimationCountsHtml = '<table class="count" cellspacing="0"><thead><tr><th>Count</th><th>Estimate</th></tr></thead><tbody>';
             estimateCountSorted.forEach((entry) => {
