@@ -194,6 +194,20 @@
         .message-bubble.error {
             color: darkred;
         }
+
+        .user-consent {
+            background-color: #272429;
+            color: #BAAFB7;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center;
+            padding: .5em;
+        }
+        .user-consent--closed {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -222,7 +236,7 @@
             <a href="#join"><span class="dot" data-joinroom-dot>&#x25cf;</span> Join room</a>
         </span>
         <span class="right">
-            scrum-poker.cards by <a href="https://matthiaskrumm.name/" target="_blank">Matthias Krumm</a>
+            scrum-poker.cards
         </span>
     </p>
 </footer>
@@ -261,6 +275,11 @@
 </div>
 
 <div class="message-bubble" data-js-message-bubble=""></div>
+
+<section class="user-consent" data-user-consent>
+    This site uses cookies for Google Analytics. You can only accept that.
+    <a href="#" data-close-user-consent>&cross;&nbsp;accept &amp; close</a>
+</section>
 
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -453,6 +472,26 @@
             $joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name'));
             joinRoom();
         }
+
+        // User consent
+        const localStorageUserConsentKey = 'spc-user-consent-closed';
+        const localStorageUserConsentValue = 'user-consent-closed';
+        const userConsentCssClass = 'user-consent--closed';
+        const userConsent = document.querySelector('[data-user-consent]');
+        const closeUserConsent = document.querySelector('[data-close-user-consent]');
+
+        if (localStorage && localStorage.getItem(localStorageUserConsentKey) === localStorageUserConsentValue) {
+            userConsent.classList.add(userConsentCssClass);
+        }
+
+        closeUserConsent.addEventListener('click', (event) => {
+            event.preventDefault();
+            userConsent.classList.add(userConsentCssClass);
+
+            if (localStorage) {
+                localStorage.setItem(localStorageUserConsentKey, localStorageUserConsentValue);
+            }
+        });
     }(window, jQuery));
 </script>
 
