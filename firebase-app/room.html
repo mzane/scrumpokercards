@@ -31,6 +31,13 @@
         h1 .room-name {
             font-weight: bold;
         }
+        input {
+            font-size: 1em;
+            border: solid 1px #CCC;
+            border-radius: 3px;
+            outline: 0 none;
+            padding: 6px 8px;
+        }
         table {
             background-color: #CCC;
             border-radius: 5px;
@@ -47,6 +54,9 @@
         }
         table.count tr:first-child {
             font-weight: bold;
+        }
+        table.estimates td:nth-child(1) {
+            text-align: left;
         }
         table.estimates td:nth-child(2) {
             font-weight: bold;
@@ -81,6 +91,13 @@
 <br>
 <div id="table-full-list"></div>
 
+<br>
+<br>
+<br>
+<div>
+    <input type="button" value="Next round (delete estimations) &#x27A4;" id="btn-next-round">
+</div>
+
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
 
@@ -113,6 +130,9 @@
         const tableVisualized = document.getElementById('table-visualized');
         // const tableEstimationCounts = document.getElementById('table-estimation-counts');
         const tableFullList = document.getElementById('table-full-list');
+        const btnNextRound = document.getElementById('btn-next-round');
+
+        const EMPTY_ESTIMATION = '';
 
         const roomName = window.location.hash.substr(1);
 
@@ -150,16 +170,19 @@
                 return parseInt(a[0], 10) - parseInt(b[0], 10);
             });
 
-            let tableVisualizedHtml = '<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>';
-            estimateCountSortedOnEstimate.forEach((entry) => {
-                tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${entry[0]}</td>`;
-            });
-            tableVisualizedHtml += '</tr><tr><th scope="row">Count</th>';
-            estimateCountSortedOnEstimate.forEach((entry) => {
-                tableVisualizedHtml += `<td>${entry[1]}</td>`;
-            });
-            tableVisualizedHtml += '</tr></tbody></table>';
-
+            let tableVisualizedHtml = '';
+            const IS_FIRST_ESTIMATE_NOT_EMPTY = estimateCountSortedOnEstimate[0][0] !== EMPTY_ESTIMATION;
+            if (IS_FIRST_ESTIMATE_NOT_EMPTY) {
+                tableVisualizedHtml = '<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>';
+                estimateCountSortedOnEstimate.forEach((entry) => {
+                    tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${entry[0]}</td>`;
+                });
+                tableVisualizedHtml += '</tr><tr><th scope="row">Count</th>';
+                estimateCountSortedOnEstimate.forEach((entry) => {
+                    tableVisualizedHtml += `<td>${entry[1]}</td>`;
+                });
+                tableVisualizedHtml += '</tr></tbody></table>';
+            }
             tableVisualized.innerHTML = tableVisualizedHtml;
 
             // 2. table - sort estimates from most to least
@@ -177,19 +200,48 @@
 
             // 3. table - sort names alphabetically
             const estimatesSorted = dataAsArray;
-            estimatesSorted.sort(function(a, b){
-                if (a.name < b.name) return -1;
-                if (a.name > b.name) return 1;
+            estimatesSorted.sort(function(a, b) {
+                a[0] = a[0].substr(0, 1).toUpperCase() + a[0].substr(1);
+                b[0] = b[0].substr(0, 1).toUpperCase() + b[0].substr(1);
+                if (a[0] < b[0]) return -1;
+                if (a[0] > b[0]) return 1;
                 return 0;
             });
 
-            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th></tr></thead><tbody>';
+            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th></th></tr></thead><tbody>';
             estimatesSorted.forEach((entry) => {
-                tableFullListHtml += `<tr><td>${entry[0]}</td><td>${entry[1].estimate}</td></tr>`;
+                tableFullListHtml += `<tr>
+                    <td>${entry[0]}</td><td>${entry[1].estimate}</td>
+                    <td><input type="button" data-delete-user="${entry[0]}" title="Remove user from room" value="&times;"></td>
+                    </tr>`;
             });
             tableFullListHtml += '</tbody></table>';
 
             tableFullList.innerHTML = tableFullListHtml;
+
+            // Delete user-button
+            const btnDeleteUser = document.querySelectorAll('[data-delete-user]');
+            btnDeleteUser.forEach((deleteUserButton) => {
+                deleteUserButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const userName = deleteUserButton.getAttribute('data-delete-user');
+                    firebase.database().ref('estimationRooms/' + roomName + '/' + userName).remove();
+                });
+            });
+
+            // Next round-button
+            btnNextRound.addEventListener('click', (event) => {
+                event.preventDefault();
+                dataAsArray.forEach((entry) => {
+                    firebase.database().ref('estimationRooms/' + roomName + '/' + entry[0]).update({
+                        estimate: EMPTY_ESTIMATION
+                    }, (error) => {
+                        if (error) {
+                            console.error('Error occurred after deleting an estimation.', error);
+                        }
+                    });
+                });
+            });
         });
     }
 </script>

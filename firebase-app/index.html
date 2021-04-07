@@ -214,7 +214,7 @@
 <div class="scrumcards" data-scrumcards>
     <a href="#?" class="scrumcard-thumb" data-scrumcard>?</a>
     <a href="#0" class="scrumcard-thumb" data-scrumcard>0</a>
-    <a href="#0,5" class="scrumcard-thumb" data-scrumcard>0,5</a>
+    <a href="#0.5" class="scrumcard-thumb" data-scrumcard>0.5</a>
     <a href="#1" class="scrumcard-thumb" data-scrumcard>1</a>
     <a href="#2" class="scrumcard-thumb" data-scrumcard>2</a>
     <a href="#3" class="scrumcard-thumb" data-scrumcard>3</a>
@@ -414,7 +414,7 @@
                         estimate: encodeURIComponent(hash)
                     }, (error) => {
                         if (error) {
-                            showBubble('Estimate not successfully posted&nbsp;&times;', 'error');
+                            showBubble(`Estimate not successfully posted in <strong>${room}</strong>&nbsp;&times;`, 'error');
                         } else {
                             showBubble('Estimate successfully posted&nbsp;&checkmark;', 'success');
                         }
@@ -443,11 +443,6 @@
                         name: name
                     };
                     showBubble('Joined room not successfully&nbsp;&times;', 'error');
-
-                    if (localStorage) {
-                        localStorage.setItem('spc_room', room);
-                        localStorage.setItem('spc_name', name);
-                    }
                 } else {
                     $joinRoomDot.addClass('success');
                     hasJoinedRoom = true;
@@ -456,6 +451,11 @@
                         name: name
                     };
                     showBubble(`Joined room <strong>${room}</strong> as <strong>${name}</strong> successfully&nbsp;&checkmark;`, 'success');
+
+                    if (localStorage) {
+                        localStorage.setItem('spc_room', room);
+                        localStorage.setItem('spc_name', name);
+                    }
 
                     $joinRoomGotoRoom.show().find('a').attr('href', `https://scrum-poker.cards/room#${room}`).find('span').html(room);
                     $joinRoomShare.show().find('a').attr('href', `https://scrum-poker.cards#join/${room}`).find('span').html(room);
