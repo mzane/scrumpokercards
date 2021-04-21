@@ -33,10 +33,15 @@
         }
         input {
             font-size: 1em;
-            border: solid 1px #CCC;
+            border: 0 none;
             border-radius: 3px;
             outline: 0 none;
-            padding: 6px 8px;
+            padding: 8px 10px;
+        }
+        input[type="submit"],
+        input[type="button"] {
+            background-color: #262626;
+            color: #fff;
         }
         table {
             background-color: #CCC;
@@ -95,7 +100,7 @@
 <br>
 <br>
 <div>
-    <input type="button" value="Next round (delete estimations) &#x27A4;" id="btn-next-round">
+    <input type="button" value="Next round (delete estimations) &raquo;" id="btn-next-round">
 </div>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -132,7 +137,7 @@
         const tableFullList = document.getElementById('table-full-list');
         const btnNextRound = document.getElementById('btn-next-round');
 
-        const EMPTY_ESTIMATION = '';
+        const EMPTY_ESTIMATION = '-';
 
         const roomName = window.location.hash.substr(1);
 
@@ -147,7 +152,7 @@
 
             const dataAsArray = Object.entries(data);
 
-            // 0. Sorted estimate counts - used table 1 and 2
+            // 0. Sorted estimate counts - used in table 1 and 2
             const estimateCount = {};
             dataAsArray.forEach((entry) => {
                 const estimate = entry[1].estimate;
@@ -201,18 +206,18 @@
             // 3. table - sort names alphabetically
             const estimatesSorted = dataAsArray;
             estimatesSorted.sort(function(a, b) {
-                a[0] = a[0].substr(0, 1).toUpperCase() + a[0].substr(1);
-                b[0] = b[0].substr(0, 1).toUpperCase() + b[0].substr(1);
-                if (a[0] < b[0]) return -1;
-                if (a[0] > b[0]) return 1;
+                const aName = a[1].visualName || a[0];
+                const bName = b[1].visualName || b[0];
+                if (aName < bName) return -1;
+                if (aName > bName) return 1;
                 return 0;
             });
 
-            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th></th></tr></thead><tbody>';
+            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th style="font-weight: normal;">Remove user</th></tr></thead><tbody>';
             estimatesSorted.forEach((entry) => {
                 tableFullListHtml += `<tr>
-                    <td>${entry[0]}</td><td>${entry[1].estimate}</td>
-                    <td><input type="button" data-delete-user="${entry[0]}" title="Remove user from room" value="&times;"></td>
+                    <td>${entry[1].visualName || entry[0]}</td><td>${entry[1].estimate}</td>
+                    <td style="text-align: right;"><input type="button" data-delete-user="${entry[0]}" title="Remove user from room" value="&times;"></td>
                     </tr>`;
             });
             tableFullListHtml += '</tbody></table>';
