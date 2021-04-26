@@ -68,6 +68,9 @@
             margin-bottom: 10px;
             text-align: center;
             text-decoration: none;
+            height: calc(25vh - 21px);
+            line-height: calc(25vh - 21px);
+            width: calc(33vw - 16px);
         }
 
         .scrumcard-big {
@@ -332,21 +335,6 @@
         let hash = '',
             hasJoinedRoom = false,
             joinedRoom = {};
-
-        function fixLayout() {
-            const winWidth = $win.width(),
-                winHeight = $win.height();
-            $('body').height(winHeight);
-            $scrumcard
-                .css('line-height', (winHeight / 4) - 21 + 'px')
-                .height((winHeight / 4) - 21)
-                .width((winWidth / 3) - 16);
-        }
-
-        fixLayout();
-        $win.on('resize', function () {
-            fixLayout();
-        });
 
         // Hide address bar
         win.scrollTo(0,1);
