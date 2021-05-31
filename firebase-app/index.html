@@ -463,7 +463,11 @@
             joinRoom();
             goBack();
         });
-        if (localStorage && localStorage.getItem('spc_room') && localStorage.getItem('spc_name')) {
+        if (~window.location.hash.indexOf('#join/')) {
+            $joinRoomForm.find('[name="room"]').val(window.location.hash.substr(6));
+            $joinRoomForm.find('[name="name"]').val();
+            joinRoom();
+        } else if (localStorage && localStorage.getItem('spc_room') && localStorage.getItem('spc_name')) {
             $joinRoomForm.find('[name="room"]').val(localStorage.getItem('spc_room'));
             $joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name'));
             joinRoom();
