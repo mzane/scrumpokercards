@@ -388,6 +388,7 @@
             if (hash.indexOf('join/') === 0) {
                 const joinedRoomName = hash.replace('join/', '');
                 $joinRoomForm.find('[name="room"]').val(joinedRoomName);
+                $joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name') || '');
                 $joinRoom.css('display', 'flex');
             } else if (hash === 'join') {
                 $joinRoom.css('display', 'flex');
@@ -424,6 +425,8 @@
         function joinRoom() {
             const room = $joinRoomForm.find('[name="room"]').val(),
                 name = $joinRoomForm.find('[name="name"]').val();
+
+            console.log('name:', name);
 
             const nameCapitalized = name.charAt(0).toUpperCase() + name.substr(1);
 
@@ -463,14 +466,12 @@
             joinRoom();
             goBack();
         });
-        if (~window.location.hash.indexOf('#join/')) {
-            $joinRoomForm.find('[name="room"]').val(window.location.hash.substr(6));
-            $joinRoomForm.find('[name="name"]').val();
-            joinRoom();
-        } else if (localStorage && localStorage.getItem('spc_room') && localStorage.getItem('spc_name')) {
-            $joinRoomForm.find('[name="room"]').val(localStorage.getItem('spc_room'));
-            $joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name'));
-            joinRoom();
+        if (!~win.location.hash.indexOf('#join/')) {
+            if (localStorage && localStorage.getItem('spc_room') && localStorage.getItem('spc_name')) {
+                $joinRoomForm.find('[name="room"]').val(localStorage.getItem('spc_room'));
+                $joinRoomForm.find('[name="name"]').val(localStorage.getItem('spc_name'));
+                joinRoom();
+            }
         }
 
         // User consent
