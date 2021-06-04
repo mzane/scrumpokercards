@@ -180,7 +180,7 @@
             if (IS_FIRST_ESTIMATE_NOT_EMPTY) {
                 tableVisualizedHtml = '<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>';
                 estimateCountSortedOnEstimate.forEach((entry) => {
-                    tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${entry[0]}</td>`;
+                    tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${decodeURIComponent(entry[0])}</td>`;
                 });
                 tableVisualizedHtml += '</tr><tr><th scope="row">Count</th>';
                 estimateCountSortedOnEstimate.forEach((entry) => {
@@ -216,7 +216,7 @@
             let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th style="font-weight: normal;">Remove user</th></tr></thead><tbody>';
             estimatesSorted.forEach((entry) => {
                 tableFullListHtml += `<tr>
-                    <td>${entry[1].visualName || entry[0]}</td><td>${entry[1].estimate}</td>
+                    <td>${entry[1].visualName || entry[0]}</td><td>${decodeURIComponent(entry[1].estimate)}</td>
                     <td style="text-align: right;"><input type="button" data-delete-user="${entry[0]}" title="Remove user from room" value="&times;"></td>
                     </tr>`;
             });
