@@ -19,7 +19,6 @@
             color: #262626;
             font-family: 'Roboto Condensed', Arial, sans-serif;
             font-size: 1.2em;
-            overflow: hidden;
         }
         body {
             margin-top: 4vh;
@@ -143,6 +142,8 @@
 
         roomNameOutput.innerHTML = roomName;
 
+        let dataAsArray;
+
         const starCountRef = firebase.database().ref('estimationRooms/' + roomName);
         starCountRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -150,7 +151,7 @@
                 return;
             }
 
-            const dataAsArray = Object.entries(data);
+            dataAsArray = Object.entries(data);
 
             // 0. Sorted estimate counts - used in table 1 and 2
             const estimateCount = {};
@@ -233,18 +234,19 @@
                     firebase.database().ref('estimationRooms/' + roomName + '/' + userName).remove();
                 });
             });
+        });
 
-            // Next round-button
-            btnNextRound.addEventListener('click', (event) => {
-                event.preventDefault();
-                dataAsArray.forEach((entry) => {
-                    firebase.database().ref('estimationRooms/' + roomName + '/' + entry[0]).update({
-                        estimate: EMPTY_ESTIMATION
-                    }, (error) => {
-                        if (error) {
-                            console.error('Error occurred after deleting an estimation.', error);
-                        }
-                    });
+        // Next round-button
+        btnNextRound.addEventListener('click', (event) => {
+            event.preventDefault();
+            console.log("dataAsArray:", dataAsArray);
+            dataAsArray.forEach((entry) => {
+                firebase.database().ref('estimationRooms/' + roomName + '/' + entry[0]).update({
+                    estimate: EMPTY_ESTIMATION
+                }, (error) => {
+                    if (error) {
+                        console.error('Error occurred after deleting an estimation.', error);
+                    }
                 });
             });
         });
