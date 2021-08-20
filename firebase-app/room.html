@@ -19,6 +19,7 @@
             color: #262626;
             font-family: 'Roboto Condensed', Arial, sans-serif;
             font-size: 1.2em;
+            overflow-x: hidden;
         }
         body {
             margin-top: 4vh;
@@ -234,6 +235,16 @@
                     firebase.database().ref('estimationRooms/' + roomName + '/' + userName).remove();
                 });
             });
+
+            // Find out whether all estimates are equal, but not '-'
+            const hasEmptyEstimations = !!dataAsArray.find(entry => entry[1].estimate === EMPTY_ESTIMATION);
+            let allEstimatesAreEqual = false;
+            if (!hasEmptyEstimations) {
+                allEstimatesAreEqual = !!dataAsArray.every((entry, index, array) => entry[1].estimate === array[Math.max(0, index - 1)][1].estimate);
+            }
+            if (allEstimatesAreEqual) {
+                createFirework();
+            }
         });
 
         // Next round-button
@@ -250,6 +261,84 @@
                 });
             });
         });
+
+        // Fireworks
+        // https://stackoverflow.com/questions/49750473/passing-parameters-to-css-animation
+        const body = document.querySelector("body");
+
+        const getRandomInt = (min, max) => {
+            const minCeil = Math.ceil(min);
+            const maxFloor = Math.floor(max);
+            return Math.floor(Math.random() * (maxFloor - minCeil + 1)) + minCeil;
+        };
+
+        const getRandomColor = () => {
+            const COLORS = ["red", "green", "yellow", "blue"];
+            return COLORS[getRandomInt(0, COLORS.length - 1)];
+        };
+
+        const getRandomEndCoordinates = () => {
+            return `${getRandomInt(5, 95)}vw, ${getRandomInt(5, 50)}vh`;
+        };
+
+        const createFlakeHtml = (index = 0) => {
+            const flakeDiv = document.createElement("div");
+            flakeDiv.dataset.flake = "flake";
+            flakeDiv.id = `flake-${index}`;
+            body.appendChild(flakeDiv);
+        };
+
+        const createFlakeStyles = (index = 0, animationTime = 2000) => {
+            const START_COORDINATES = "50vw, -30vh";
+            const FLAKE_STYLES = `#flake-${index} {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                animation: flakeDisplaceContent${index} ${animationTime}ms ease-out forwards;
+                background-color: ${getRandomColor()};
+              }
+              @keyframes flakeDisplaceContent${index} {
+                0% {
+                  opacity: 0;
+                  transform: translate(${START_COORDINATES});
+                }
+                20% {
+                  opacity: 1;
+                }
+                80% {
+                  opacity: 1;
+                }
+                100% {
+                  opacity: 0;
+                  transform: translate(${getRandomEndCoordinates()});
+                }
+              }`;
+
+            const styleHeadElement = document.createElement("style");
+            styleHeadElement.dataset.flake = "flake";
+            styleHeadElement.innerHTML = FLAKE_STYLES;
+            document.querySelector("head").appendChild(styleHeadElement);
+        };
+
+        const removeFlakes = () => {
+            const flakes = document.querySelectorAll("[data-flake=flake]");
+            flakes.forEach((flake) => {
+                flake.parentNode?.removeChild(flake);
+            });
+        };
+
+        function createFirework() {
+            const FLAKE_AMOUNT = 20;
+            const FLAKE_ANIMATION_TIME = 2000; // in ms
+
+            for (let i = 0, l = FLAKE_AMOUNT; i < l; i++) {
+                createFlakeHtml(i);
+                createFlakeStyles(i, FLAKE_ANIMATION_TIME);
+            }
+
+            window.setTimeout(removeFlakes, FLAKE_ANIMATION_TIME + 100);
+        }
+
     }
 </script>
 

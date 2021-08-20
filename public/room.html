@@ -1,4 +1,228 @@
-<!doctype html><html lang="en"><meta charset="UTF-8"><title>scrum-poker.cards Estimation Room</title><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet" type="text/css"><style>*{margin:0;padding:0}*,:after,:before{box-sizing:inherit}html{background-color:#fff;box-sizing:border-box;color:#262626;font-family:'Roboto Condensed',Arial,sans-serif;font-size:1.2em}body{margin-top:4vh;text-align:center}h1{font-weight:400}h1 .room-name{font-weight:700}input{font-size:1em;border:0 none;border-radius:3px;outline:0 none;padding:8px 10px}input[type=button],input[type=submit]{background-color:#262626;color:#fff}table{background-color:#ccc;border-radius:5px;margin:auto;padding:5px}th{padding:4px 6px;text-align:left}td{border-top:solid 1px #999;padding:4px 6px}table.count tr:first-child{font-weight:700}table.estimates td:nth-child(1){text-align:left}table.estimates td:nth-child(2){font-weight:700}table.visualized{background-color:#f09900}table.visualized th{vertical-align:baseline}table.visualized td{border-top:0 none;text-align:center;vertical-align:baseline;width:40px}footer{font-size:.8em;margin-top:3em}</style><h1>Estimation Room &bdquo;<span class="room-name" id="room-name">&ndash;no room name defined&ndash;</span>&ldquo;</h1><br><div id="table-visualized"></div><br><br><div id="table-full-list"></div><br><br><br><div><input type="button" value="Next round (delete estimations) &raquo;" id="btn-next-round"></div><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-analytics.js"></script><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-database.js"></script><script>const firebaseConfig={apiKey:"AIzaSyAd1uiSyR2XXN8rUaHmXY4GsgUbxmYZJYY",authDomain:"scrumpokercards-38516.firebaseapp.com",databaseURL:"https://scrumpokercards-38516-default-rtdb.europe-west1.firebasedatabase.app",projectId:"scrumpokercards-38516",storageBucket:"scrumpokercards-38516.appspot.com",messagingSenderId:"926440560533",appId:"1:926440560533:web:d4446d1ca7bf643be7089c",measurementId:"G-XHCMWWY1NY"};if(firebase.initializeApp(firebaseConfig),firebase.analytics(),window.location.hash){const a=document.getElementById("room-name"),b=document.getElementById("table-visualized"),c=document.getElementById("table-full-list"),d=document.getElementById("btn-next-round"),e="-",f=window.location.hash.substr(1);a.innerHTML=f;let m;const h=firebase.database().ref("estimationRooms/"+f);h.on("value",o=>{o=o.val();if(o){m=Object.entries(o);const s={};m.forEach(e=>{e=e[1].estimate;void 0===s[e]?s[e]=1:s[e]=++s[e]});const r=[];for(const l in s)s.hasOwnProperty(l)&&"undefined"!==l&&r.push([l,s[l]]);const n=[...r];n.sort(function(e,t){return parseInt(e[0],10)-parseInt(t[0],10)});let t="";n[0][0]!==e&&(t='<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>',n.forEach(e=>{t+=`<td style="font-size: ${1.5*e[1]}em;">${decodeURIComponent(e[0])}</td>`}),t+='</tr><tr><th scope="row">Count</th>',n.forEach(e=>{t+=`<td>${e[1]}</td>`}),t+="</tr></tbody></table>"),b.innerHTML=t;const i=m;i.sort(function(e,t){e=e[1].visualName||e[0],t=t[1].visualName||t[0];return e<t?-1:t<e?1:0});let a='<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th style="font-weight: normal;">Remove user</th></tr></thead><tbody>';i.forEach(e=>{a+=`<tr>
-                    <td>${e[1].visualName||e[0]}</td><td>${decodeURIComponent(e[1].estimate)}</td>
-                    <td style="text-align: right;"><input type="button" data-delete-user="${e[0]}" title="Remove user from room" value="&times;"></td>
-                    </tr>`}),a+="</tbody></table>",c.innerHTML=a;const d=document.querySelectorAll("[data-delete-user]");d.forEach(t=>{t.addEventListener("click",e=>{e.preventDefault();e=t.getAttribute("data-delete-user");firebase.database().ref("estimationRooms/"+f+"/"+e).remove()})})}}),d.addEventListener("click",t=>{t.preventDefault(),console.log("dataAsArray:",m),m.forEach(t=>{firebase.database().ref("estimationRooms/"+f+"/"+t[0]).update({estimate:e},e=>{e&&console.error("Error occurred after deleting an estimation.",e)})})})}</script>
+<!doctype html><html lang="en"><meta charset="UTF-8"><title>scrum-poker.cards Estimation Room</title><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet" type="text/css"><style>*{margin:0;padding:0}*,:after,:before{box-sizing:inherit}html{background-color:#fff;box-sizing:border-box;color:#262626;font-family:'Roboto Condensed',Arial,sans-serif;font-size:1.2em;overflow-x:hidden}body{margin-top:4vh;text-align:center}h1{font-weight:400}h1 .room-name{font-weight:700}input{font-size:1em;border:0 none;border-radius:3px;outline:0 none;padding:8px 10px}input[type=button],input[type=submit]{background-color:#262626;color:#fff}table{background-color:#ccc;border-radius:5px;margin:auto;padding:5px}th{padding:4px 6px;text-align:left}td{border-top:solid 1px #999;padding:4px 6px}table.count tr:first-child{font-weight:700}table.estimates td:nth-child(1){text-align:left}table.estimates td:nth-child(2){font-weight:700}table.visualized{background-color:#f09900}table.visualized th{vertical-align:baseline}table.visualized td{border-top:0 none;text-align:center;vertical-align:baseline;width:40px}footer{font-size:.8em;margin-top:3em}</style><h1>Estimation Room &bdquo;<span class="room-name" id="room-name">&ndash;no room name defined&ndash;</span>&ldquo;</h1><br><div id="table-visualized"></div><br><br><div id="table-full-list"></div><br><br><br><div><input type="button" value="Next round (delete estimations) &raquo;" id="btn-next-round"></div><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-analytics.js"></script><script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-database.js"></script><script>// Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyAd1uiSyR2XXN8rUaHmXY4GsgUbxmYZJYY",
+        authDomain: "scrumpokercards-38516.firebaseapp.com",
+        databaseURL: "https://scrumpokercards-38516-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "scrumpokercards-38516",
+        storageBucket: "scrumpokercards-38516.appspot.com",
+        messagingSenderId: "926440560533",
+        appId: "1:926440560533:web:d4446d1ca7bf643be7089c",
+        measurementId: "G-XHCMWWY1NY"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    // -----------------------------
+    // Get room-data:
+    if (window.location.hash) {
+        const roomNameOutput = document.getElementById('room-name');
+        const tableVisualized = document.getElementById('table-visualized');
+        // const tableEstimationCounts = document.getElementById('table-estimation-counts');
+        const tableFullList = document.getElementById('table-full-list');
+        const btnNextRound = document.getElementById('btn-next-round');
+
+        const EMPTY_ESTIMATION = '-';
+
+        const roomName = window.location.hash.substr(1);
+
+        roomNameOutput.innerHTML = roomName;
+
+        let dataAsArray;
+
+        const starCountRef = firebase.database().ref('estimationRooms/' + roomName);
+        starCountRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                return;
+            }
+
+            dataAsArray = Object.entries(data);
+
+            // 0. Sorted estimate counts - used in table 1 and 2
+            const estimateCount = {};
+            dataAsArray.forEach((entry) => {
+                const estimate = entry[1].estimate;
+                if (estimateCount[estimate] === undefined) {
+                    estimateCount[estimate] = 1;
+                } else {
+                    estimateCount[estimate] = ++estimateCount[estimate];
+                }
+            });
+            const estimateCountSorted = [];
+            for (const estimate in estimateCount) {
+                if (estimateCount.hasOwnProperty(estimate) && estimate !== 'undefined') {
+                    estimateCountSorted.push([estimate, estimateCount[estimate]]);
+                }
+            }
+
+            // 1. table - visualized
+            const estimateCountSortedOnEstimate = [...estimateCountSorted];
+            estimateCountSortedOnEstimate.sort(function(a, b) {
+                return parseInt(a[0], 10) - parseInt(b[0], 10);
+            });
+
+            let tableVisualizedHtml = '';
+            const IS_FIRST_ESTIMATE_NOT_EMPTY = estimateCountSortedOnEstimate[0][0] !== EMPTY_ESTIMATION;
+            if (IS_FIRST_ESTIMATE_NOT_EMPTY) {
+                tableVisualizedHtml = '<table class="visualized" cellspacing="0"><tbody><tr><th scope="row">Estimate</th>';
+                estimateCountSortedOnEstimate.forEach((entry) => {
+                    tableVisualizedHtml += `<td style="font-size: ${entry[1] * 1.5}em;">${decodeURIComponent(entry[0])}</td>`;
+                });
+                tableVisualizedHtml += '</tr><tr><th scope="row">Count</th>';
+                estimateCountSortedOnEstimate.forEach((entry) => {
+                    tableVisualizedHtml += `<td>${entry[1]}</td>`;
+                });
+                tableVisualizedHtml += '</tr></tbody></table>';
+            }
+            tableVisualized.innerHTML = tableVisualizedHtml;
+
+            // 2. table - sort estimates from most to least
+            /*estimateCountSorted.sort(function(a, b) {
+                return b[1] - a[1];
+            });
+
+            let tableEstimationCountsHtml = '<table class="count" cellspacing="0"><thead><tr><th>Count</th><th>Estimate</th></tr></thead><tbody>';
+            estimateCountSorted.forEach((entry) => {
+                tableEstimationCountsHtml += `<tr><td>${entry[1]}</td><td>${entry[0]}</td></tr>`;
+            });
+            tableEstimationCountsHtml += '</tbody></table>';
+
+            tableEstimationCounts.innerHTML = tableEstimationCountsHtml;*/
+
+            // 3. table - sort names alphabetically
+            const estimatesSorted = dataAsArray;
+            estimatesSorted.sort(function(a, b) {
+                const aName = a[1].visualName || a[0];
+                const bName = b[1].visualName || b[0];
+                if (aName < bName) return -1;
+                if (aName > bName) return 1;
+                return 0;
+            });
+
+            let tableFullListHtml = '<table class="estimates" cellspacing="0"><thead><tr><th>Name</th><th>Estimate</th><th style="font-weight: normal;">Remove user</th></tr></thead><tbody>';
+            estimatesSorted.forEach((entry) => {
+                tableFullListHtml += `<tr>
+                    <td>${entry[1].visualName || entry[0]}</td><td>${decodeURIComponent(entry[1].estimate)}</td>
+                    <td style="text-align: right;"><input type="button" data-delete-user="${entry[0]}" title="Remove user from room" value="&times;"></td>
+                    </tr>`;
+            });
+            tableFullListHtml += '</tbody></table>';
+
+            tableFullList.innerHTML = tableFullListHtml;
+
+            // Delete user-button
+            const btnDeleteUser = document.querySelectorAll('[data-delete-user]');
+            btnDeleteUser.forEach((deleteUserButton) => {
+                deleteUserButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const userName = deleteUserButton.getAttribute('data-delete-user');
+                    firebase.database().ref('estimationRooms/' + roomName + '/' + userName).remove();
+                });
+            });
+
+            // Find out whether all estimates are equal, but not '-'
+            const hasEmptyEstimations = !!dataAsArray.find(entry => entry[1].estimate === EMPTY_ESTIMATION);
+            let allEstimatesAreEqual = false;
+            if (!hasEmptyEstimations) {
+                allEstimatesAreEqual = !!dataAsArray.every((entry, index, array) => entry[1].estimate === array[Math.max(0, index - 1)][1].estimate);
+            }
+            if (allEstimatesAreEqual) {
+                createFirework();
+            }
+        });
+
+        // Next round-button
+        btnNextRound.addEventListener('click', (event) => {
+            event.preventDefault();
+            console.log("dataAsArray:", dataAsArray);
+            dataAsArray.forEach((entry) => {
+                firebase.database().ref('estimationRooms/' + roomName + '/' + entry[0]).update({
+                    estimate: EMPTY_ESTIMATION
+                }, (error) => {
+                    if (error) {
+                        console.error('Error occurred after deleting an estimation.', error);
+                    }
+                });
+            });
+        });
+
+        // Fireworks
+        // https://stackoverflow.com/questions/49750473/passing-parameters-to-css-animation
+        const body = document.querySelector("body");
+
+        const getRandomInt = (min, max) => {
+            const minCeil = Math.ceil(min);
+            const maxFloor = Math.floor(max);
+            return Math.floor(Math.random() * (maxFloor - minCeil + 1)) + minCeil;
+        };
+
+        const getRandomColor = () => {
+            const COLORS = ["red", "green", "yellow", "blue"];
+            return COLORS[getRandomInt(0, COLORS.length - 1)];
+        };
+
+        const getRandomEndCoordinates = () => {
+            return `${getRandomInt(5, 95)}vw, ${getRandomInt(5, 50)}vh`;
+        };
+
+        const createFlakeHtml = (index = 0) => {
+            const flakeDiv = document.createElement("div");
+            flakeDiv.dataset.flake = "flake";
+            flakeDiv.id = `flake-${index}`;
+            body.appendChild(flakeDiv);
+        };
+
+        const createFlakeStyles = (index = 0, animationTime = 2000) => {
+            const START_COORDINATES = "50vw, -30vh";
+            const FLAKE_STYLES = `#flake-${index} {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                animation: flakeDisplaceContent${index} ${animationTime}ms ease-out forwards;
+                background-color: ${getRandomColor()};
+              }
+              @keyframes flakeDisplaceContent${index} {
+                0% {
+                  opacity: 0;
+                  transform: translate(${START_COORDINATES});
+                }
+                20% {
+                  opacity: 1;
+                }
+                80% {
+                  opacity: 1;
+                }
+                100% {
+                  opacity: 0;
+                  transform: translate(${getRandomEndCoordinates()});
+                }
+              }`;
+
+            const styleHeadElement = document.createElement("style");
+            styleHeadElement.dataset.flake = "flake";
+            styleHeadElement.innerHTML = FLAKE_STYLES;
+            document.querySelector("head").appendChild(styleHeadElement);
+        };
+
+        const removeFlakes = () => {
+            const flakes = document.querySelectorAll("[data-flake=flake]");
+            flakes.forEach((flake) => {
+                flake.parentNode?.removeChild(flake);
+            });
+        };
+
+        function createFirework() {
+            const FLAKE_AMOUNT = 20;
+            const FLAKE_ANIMATION_TIME = 2000; // in ms
+
+            for (let i = 0, l = FLAKE_AMOUNT; i < l; i++) {
+                createFlakeHtml(i);
+                createFlakeStyles(i, FLAKE_ANIMATION_TIME);
+            }
+
+            window.setTimeout(removeFlakes, FLAKE_ANIMATION_TIME + 100);
+        }
+
+    }</script>
